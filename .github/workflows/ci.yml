@@ -44,7 +44,7 @@ jobs:
             libcurl4-openssl-dev \
             libedit2 \
             libpython3-dev \
-            libsqlite3-0 \
+            libsqlite3-dev \
             libxml2-dev \
             libncurses-dev \
             libz3-dev \

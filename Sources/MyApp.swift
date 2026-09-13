@@ -3,6 +3,7 @@
 
 import Foundation
 import QtBridge
+import TsubameCore
 
 @main
 struct MyApp: QApp {
