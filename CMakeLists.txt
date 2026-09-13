@@ -61,7 +61,7 @@ else()
     FetchContent_Declare(
         TsubameCoreSource
         GIT_REPOSITORY https://github.com/TsubameApp/Core.git
-        GIT_TAG ec979e7cb87daa324fba80598e4540f15bf23754
+        GIT_TAG e7223adde6905434c4ca46743338fc013b04b92b
     )
 
     FetchContent_MakeAvailable(TsubameCoreSource)
