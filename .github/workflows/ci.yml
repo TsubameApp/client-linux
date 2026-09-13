@@ -27,15 +27,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Swift
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: "6.3.3"
-
-      - name: Install Qt
+      - name: Install dependencies
+        shell: bash
         run: |
+          set -euxo pipefail
+
           sudo apt-get update
+
           sudo apt-get install -y \
+            binutils \
+            git \
+            unzip \
+            zip \
+            gnupg2 \
+            libc6-dev \
+            libcurl4-openssl-dev \
+            libedit2 \
+            libpython3-dev \
+            libsqlite3-0 \
+            libxml2-dev \
+            libncurses-dev \
+            libz3-dev \
+            pkg-config \
+            zlib1g-dev \
             cmake \
             ninja-build \
             qt6-base-dev \
@@ -44,15 +58,44 @@ jobs:
             qt6-declarative-dev-tools \
             qt6-wayland
 
-      - name: Versions
+      - name: Install Swift 6.3.3
+        shell: bash
         run: |
+          set -euxo pipefail
+
+          SWIFT_VERSION=6.3.3
+          SWIFT_ROOT="$HOME/.local/swift-$SWIFT_VERSION"
+
+          curl -fL \
+            "https://download.swift.org/swift-${SWIFT_VERSION}-release/ubuntu2404/swift-${SWIFT_VERSION}-RELEASE/swift-${SWIFT_VERSION}-RELEASE-ubuntu24.04.tar.gz" \
+            -o /tmp/swift.tar.gz
+
+          mkdir -p "$SWIFT_ROOT"
+
+          tar -xzf /tmp/swift.tar.gz \
+            -C "$SWIFT_ROOT" \
+            --strip-components=1
+
+          echo "$SWIFT_ROOT/usr/bin" >> "$GITHUB_PATH"
+
+          "$SWIFT_ROOT/usr/bin/swift" --version
+
+      - name: Versions
+        shell: bash
+        run: |
+          set -euxo pipefail
+
           swift --version
+          clang --version
           cmake --version
           ninja --version
           qmake6 -query QT_VERSION
 
       - name: Configure
+        shell: bash
         run: |
+          set -euxo pipefail
+
           cmake \
             -S . \
             -B .build \
@@ -60,12 +103,18 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
+        shell: bash
         run: |
+          set -euxo pipefail
+
           cmake --build .build --parallel
 
       - name: QML lint
+        shell: bash
         run: |
-          qmllint Resources/main.qml
+          set -euxo pipefail
+
+          /usr/lib/qt6/bin/qmllint Resources/main.qml
 
   notify-umbrella:
     name: Notify umbrella
